@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; background: #eee; padding: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 50px; }
+    .card { background: white; padding: 10px; text-align: center; border: 1px solid #ccc; }
+    .card img { max-width: 100%; height: auto; }
+    .frame-container { background: red; display: inline-block; padding: 20px; }
+    .frame-container img { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <h1>Asset Inspector</h1>
+  
+  <h2>Faces (1.png to 9.png)</h2>
+  <div class="grid">
+    <div class="card"><h3>1.png</h3><img src="1.png" alt="1.png"></div>
+    <div class="card"><h3>2.png</h3><img src="2.png" alt="2.png"></div>
+    <div class="card"><h3>3.png</h3><img src="3.png" alt="3.png"></div>
+    <div class="card"><h3>4.png</h3><img src="4.png" alt="4.png"></div>
+    <div class="card"><h3>5.png</h3><img src="5.png" alt="5.png"></div>
+    <div class="card"><h3>6.png</h3><img src="6.png" alt="6.png"></div>
+    <div class="card"><h3>7.png</h3><img src="7.png" alt="7.png"></div>
+    <div class="card"><h3>8.png</h3><img src="8.png" alt="8.png"></div>
+    <div class="card"><h3>9.png</h3><img src="9.png" alt="9.png"></div>
+  </div>
+
+  <h2>Frame (frame.gif on Red Background)</h2>
+  <p>Observe where the red background shows through to determine the exact bounding box of the hole.</p>
+  <div class="frame-container">
+    <img src="frame.gif" alt="frame.gif">
+  </div>
+</body>
+</html>
