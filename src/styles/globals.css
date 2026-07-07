@@ -2094,3 +2094,1444 @@ body.ready {
 /* ═══════════════════════════════════════════
    END PROJECTS PAGE
    ═══════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════
+   BROKEN KEYBOARD — CONTACT SECTION
+   ═══════════════════════════════════════════ */
+
+/* ── Section shell ── */
+.bk-section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: var(--color-black);
+  color: var(--color-off-white);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ── */
+.bk-header {
+  position: relative;
+  z-index: 10;
+  padding: 7rem 1.5rem 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  pointer-events: none;
+}
+
+@media (min-width: 48rem) {
+  .bk-header {
+    padding: 9rem 5rem 4rem;
+  }
+}
+
+.bk-header__eyebrow {
+  display: block;
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.38;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .bk-header__eyebrow {
+    font-size: var(--text-xs);
+  }
+}
+
+.bk-header__title {
+  font-family: var(--font-title);
+  font-size: clamp(3.5rem, 10vw, 8rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.08em;
+}
+
+.bk-header__title-line {
+  display: block;
+}
+
+.bk-header__title-em {
+  display: block;
+  font-family: var(--font-script);
+  font-style: normal;
+  text-transform: none;
+  font-weight: 400;
+  opacity: 0.72;
+}
+
+.bk-header__body {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-light);
+  opacity: 0.45;
+  max-width: 32ch;
+  line-height: 1.6;
+}
+
+/* ── Physics Stage ── */
+.bk-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 60dvh;
+  width: 100%;
+}
+
+/* Hidden Matter.js canvas — present for mouse events but invisible */
+.bk-stage__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none; /* Mouse events come from the scene wrapper */
+}
+
+/* DOM keys container — synced to physics bodies each frame */
+.bk-stage__keys {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* individual keys turn on their own pointer events */
+}
+
+/* ── Individual Key ── */
+.bk-key {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
+  /* will-change hoisted for GPU compositing */
+  will-change: transform;
+  /* transform-origin: center is handled by translate(-50%,-50%) in JS */
+}
+
+/* Size variants */
+.bk-key--small  { width: 52px;  height: 52px; }
+.bk-key--normal { width: 76px;  height: 52px; }
+.bk-key--wide   { width: 116px; height: 52px; }
+.bk-key--xwide  { width: 156px; height: 52px; }
+
+/* ── Key face (the visible 3D keycap) ── */
+.bk-key__face {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  overflow: hidden;
+
+  /* Keycap surface — inherits from parent color scheme */
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+  /*
+   * Layered box-shadows simulate:
+   * 1. Top-face highlight (inset light from top-left)
+   * 2. Bottom rim/stem shadow (keycap depth)
+   * 3. Outer ambient glow
+   */
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, currentColor 28%, transparent),
+    inset 0 -3px 0 color-mix(in srgb, currentColor 12%, transparent),
+    0 4px 0 color-mix(in srgb, currentColor 20%, transparent),
+    0 8px 24px color-mix(in srgb, currentColor 6%, transparent);
+
+  transition:
+    transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.1s ease,
+    background 0.1s ease;
+}
+
+/* Link keys get a subtle accent treatment */
+.bk-key--link .bk-key__face {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  border-color: color-mix(in srgb, currentColor 28%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, currentColor 40%, transparent),
+    inset 0 -3px 0 color-mix(in srgb, currentColor 18%, transparent),
+    0 4px 0 color-mix(in srgb, currentColor 28%, transparent),
+    0 8px 32px color-mix(in srgb, currentColor 10%, transparent);
+}
+
+/* Decorative keys are subtler */
+.bk-key--deco .bk-key__face {
+  background: color-mix(in srgb, currentColor 4%, transparent);
+  border-color: color-mix(in srgb, currentColor 10%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, currentColor 14%, transparent),
+    inset 0 -2px 0 color-mix(in srgb, currentColor 8%, transparent),
+    0 3px 0 color-mix(in srgb, currentColor 12%, transparent),
+    0 6px 16px color-mix(in srgb, currentColor 4%, transparent);
+}
+
+/* Hover: lift the key */
+@media (hover: hover) and (pointer: fine) {
+  .bk-key--link:hover .bk-key__face {
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 color-mix(in srgb, currentColor 50%, transparent),
+      inset 0 -3px 0 color-mix(in srgb, currentColor 20%, transparent),
+      0 6px 0 color-mix(in srgb, currentColor 32%, transparent),
+      0 12px 40px color-mix(in srgb, currentColor 14%, transparent);
+  }
+}
+
+/* Pressed: sink the key */
+.bk-key--pressed .bk-key__face {
+  transform: translateY(3px) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, currentColor 18%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, currentColor 8%, transparent),
+    0 1px 0 color-mix(in srgb, currentColor 14%, transparent),
+    0 4px 12px color-mix(in srgb, currentColor 4%, transparent);
+}
+
+/* ── Key typography ── */
+.bk-key__label {
+  font-family: var(--font-label);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: currentColor;
+  opacity: 0.85;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (min-width: 48rem) {
+  .bk-key__label {
+    font-size: 10px;
+  }
+}
+
+.bk-key--link .bk-key__label {
+  opacity: 1;
+}
+
+.bk-key__sub {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  opacity: 0.4;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ── Ambient radial glow behind the key pile ── */
+.bk-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 40%;
+  background: radial-gradient(
+    ellipse at bottom center,
+    color-mix(in srgb, currentColor 6%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════
+   HIRE / CONTACT SECTION
+   ═══════════════════════════════════════════ */
+
+/* ── Semantic color token (scoped, no hardcoded hex in JSX) ── */
+.hire-section {
+  --hire-green: oklch(65% 0.16 145);
+  --hire-surface: color-mix(in srgb, var(--color-off-white) 7%, var(--color-black));
+  --hire-border: color-mix(in srgb, var(--color-off-white) 14%, transparent);
+  --hire-muted: color-mix(in srgb, var(--color-off-white) 45%, transparent);
+  --hire-form-fs: clamp(1.5rem, 3vw, 2.8rem);  /* slightly larger, more editorial */
+
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--color-black);
+  color: var(--color-off-white);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Thin expanding divider line at the top of the form section ── */
+.hire-divider {
+  width: 100%;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-off-white) 14%, transparent);
+  transform-origin: left center;
+  margin-bottom: clamp(4rem, 7vw, 7rem);
+}
+
+/* ─── TOP HEADING ───────────────────────────── */
+.hire-top {
+  position: relative;
+  z-index: 2;
+  padding-block: clamp(6rem, 10vw, 10rem) 3rem;
+}
+
+.hire-top__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 48rem) {
+  .hire-top__inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 4rem;
+  }
+}
+
+.hire-top__eyebrow {
+  display: block;
+  opacity: 0.38;
+  margin-bottom: 1.5rem;
+}
+
+.hire-top__title {
+  font-family: var(--font-title);
+  font-size: clamp(4rem, 11vw, 10rem);
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hire-top__title-line {
+  display: block;
+}
+
+.hire-top__title-em {
+  display: block;
+  font-family: var(--font-script);
+  font-style: normal;
+  text-transform: none;
+  font-weight: 400;
+  opacity: 0.7;
+  letter-spacing: 0;
+}
+
+/* Right meta */
+.hire-top__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.hire-top__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--hire-green);
+  width: fit-content;
+  color: var(--hire-green);
+}
+
+@keyframes hire-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  60%       { transform: scale(1.6); opacity: 0.45; }
+}
+
+.hire-top__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hire-green);
+  flex-shrink: 0;
+  animation: hire-pulse 2.2s ease-in-out infinite;
+}
+
+.hire-top__desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-light);
+  color: var(--hire-muted);
+  line-height: 1.65;
+  max-width: 40ch;
+}
+
+/* ─── FORM BODY ──────────────────────────────── */
+.hire-body {
+  flex: 1 1 auto;
+  padding-block: 0 clamp(5rem, 8vw, 8rem);
+  position: relative;
+  z-index: 2;
+}
+
+/* Decorative rule */
+.hire-rule {
+  display: flex;
+  align-items: center;
+  margin-bottom: clamp(2.5rem, 5vw, 5rem);
+}
+
+.hire-rule__label {
+  color: var(--hire-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── NARRATIVE FORM ──────────────────────────── */
+.hire-form {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.6rem, 1.5vw, 1.2rem);
+}
+
+/* Each "sentence" line of the mad-libs */
+.hire-form__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em 0.45em;
+  line-height: 1.2;
+}
+
+/* Static prose text */
+.hire-form__prose {
+  font-family: var(--font-sans);
+  font-size: var(--hire-form-fs);
+  font-weight: 300;
+  color: var(--hire-muted);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Text input wrapper */
+.hire-form__field-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 140px;
+  max-width: 320px;
+}
+
+.hire-form__field-wrap--wide {
+  min-width: 200px;
+  max-width: 420px;
+}
+
+/* Underline text input */
+.hire-form__input {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--hire-form-fs);
+  font-weight: 400;
+  color: var(--color-off-white);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--hire-border);
+  outline: none;
+  padding: 0.05em 0.1em 0.18em;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: border-color 0.25s ease;
+  caret-color: var(--color-off-white);
+  min-width: 0;
+}
+
+.hire-form__input::placeholder {
+  color: color-mix(in srgb, var(--color-off-white) 25%, transparent);
+}
+
+.hire-form__input:focus {
+  border-bottom-color: var(--color-off-white);
+}
+
+/* ─── INLINE DROPDOWN ─────────────────────────── */
+.hire-dd {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Trigger button */
+.hire-dd__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.08em 0.35em 0.2em;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--hire-border);
+  color: color-mix(in srgb, var(--color-off-white) 38%, transparent);
+  font-family: var(--font-sans);
+  font-size: var(--hire-form-fs);
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+  white-space: nowrap;
+  outline: none;
+  border-radius: 3px 3px 0 0;
+}
+
+.hire-dd__btn:focus-visible {
+  outline: 1.5px solid var(--color-off-white);
+  outline-offset: 2px;
+}
+
+.hire-dd--open .hire-dd__btn,
+.hire-dd__btn:hover {
+  border-bottom-color: color-mix(in srgb, var(--color-off-white) 50%, transparent);
+  background: color-mix(in srgb, var(--color-off-white) 5%, transparent);
+  color: color-mix(in srgb, var(--color-off-white) 65%, transparent);
+}
+
+/* Selected state — full brightness */
+.hire-dd__btn--filled {
+  color: var(--color-off-white);
+  border-bottom-color: color-mix(in srgb, var(--color-off-white) 55%, transparent);
+  font-weight: 400;
+}
+
+.hire-dd__val {
+  display: inline-block;
+}
+
+.hire-dd__caret {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: transform 0.22s ease;
+  opacity: 0.5;
+}
+
+/* Floating dropdown panel */
+.hire-dd__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  padding: 0.4rem;
+  border-radius: 10px;
+  background: var(--hire-surface);
+  border: 1px solid var(--hire-border);
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow:
+    0 8px 32px color-mix(in srgb, #000 60%, transparent),
+    0 2px 8px color-mix(in srgb, #000 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-off-white) 8%, transparent);
+  overflow: hidden;
+}
+
+/* Individual option */
+.hire-dd__opt {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-off-white) 70%, transparent);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+  outline: none;
+}
+
+.hire-dd__opt:hover,
+.hire-dd__opt:focus-visible {
+  background: color-mix(in srgb, var(--color-off-white) 8%, transparent);
+  color: var(--color-off-white);
+}
+
+.hire-dd__opt--active {
+  color: var(--color-off-white);
+}
+
+.hire-dd__check {
+  font-size: 8px;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+/* ─── SUBMIT BUTTON ──────────────────────────── */
+.hire-form__submit-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: clamp(1.5rem, 3vw, 3rem);
+  flex-wrap: wrap;
+}
+
+.hire-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 2.2rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--color-off-white) 28%, transparent);
+  background: color-mix(in srgb, var(--color-off-white) 10%, transparent);
+  color: var(--color-off-white);
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.28s ease,
+    border-color 0.28s ease,
+    transform 0.18s ease,
+    gap 0.3s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+@media (min-width: 48rem) {
+  .hire-submit {
+    font-size: var(--text-xs);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hire-submit:not(.hire-submit--disabled):not(.hire-submit--loading):hover {
+    background: color-mix(in srgb, var(--color-off-white) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-off-white) 50%, transparent);
+    gap: 1.5rem;
+    transform: translateY(-1px);
+  }
+}
+
+.hire-submit--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.hire-submit__text {
+  transition: opacity 0.2s;
+}
+
+.hire-submit__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Spinner for loading state */
+.hire-submit__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-top-color: currentColor;
+  animation: hire-spin 0.7s linear infinite;
+}
+
+@keyframes hire-spin {
+  to { transform: rotate(360deg); }
+}
+
+.hire-form__hint {
+  color: var(--hire-muted);
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+/* ─── SUCCESS STATE ──────────────────────────── */
+.hire-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding-block: 2rem;
+}
+
+.hire-success__circle {
+  color: var(--hire-green);
+}
+
+.hire-success__heading {
+  font-family: var(--font-title);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.hire-success__msg {
+  color: var(--hire-muted);
+  max-width: 40ch;
+}
+
+.hire-success__msg strong {
+  color: var(--color-off-white);
+  font-weight: 400;
+}
+
+.hire-success__reset {
+  background: transparent;
+  border: none;
+  color: var(--hire-muted);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+  margin-top: 0.5rem;
+}
+
+.hire-success__reset:hover {
+  color: var(--color-off-white);
+}
+
+/* ─── FOOTER ─────────────────────────────────── */
+.hire-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--hire-border);
+}
+
+.hire-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding-block: 1.5rem 2rem;
+}
+
+.hire-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem 1.8rem;
+  flex-wrap: wrap;
+}
+
+.hire-footer__link {
+  font-family: var(--font-label);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-off-white) 50%, transparent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+@media (min-width: 48rem) {
+  .hire-footer__link {
+    font-size: var(--text-xs);
+  }
+}
+
+.hire-footer__link:hover {
+  color: var(--color-off-white);
+}
+
+.hire-footer__copy {
+  color: color-mix(in srgb, var(--color-off-white) 28%, transparent);
+  font-size: 9px;
+}
+
+/* ═══════════════════════════════════════════
+   END HIRE / CONTACT SECTION
+   ═══════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════
+   HIRE KEY FOOTER  (.hire-key-footer-*)
+   Physics keyboard embedded as the footer of
+   the hire / contact section. Keys fall in and
+   act as interactive links. No separate section.
+   ═══════════════════════════════════════════ */
+
+/* ── Contact page wrapper ── */
+.contact-page {
+  background-color: var(--color-black);
+}
+
+/* ── Footer wrapper — directly below the form without any horizontal line ── */
+.hire-key-footer {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-top: clamp(3rem, 5vw, 6rem);
+  padding-bottom: clamp(2rem, 4vw, 4rem);
+}
+
+/* ── Synth / Mechanical Keyboard Deck Chassis ── */
+.hire-key-footer__chassis {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(180deg, #151619 0%, #0c0d0f 100%);
+  border: 1px solid color-mix(in srgb, var(--color-off-white) 12%, transparent);
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  padding: clamp(1.2rem, 2.5vw, 2.2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+/* ── Physics stage — keyboard tray housing the keys ── */
+.hire-key-footer__stage {
+  position: relative;
+  width: 100%;
+  height: clamp(250px, 34dvh, 380px);
+  background: #08090a;
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 10px 30px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+/* ── Hidden canvas (required for MouseConstraint, invisible) ── */
+.hire-key-footer__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── DOM keys layer ── */
+.hire-key-footer__keys {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* individual .bk-key elements re-enable their own */
+}
+
+/* Keys inside the footer layer are interactive */
+.hire-key-footer__keys .bk-key {
+  pointer-events: auto;
+}
+
+/* ── Custom Awwwards Synth Key Themes ── */
+.bk-key--cream .bk-key__face {
+  background: #fef5d1 !important;
+  color: #1a1a1c !important;
+  border-color: #d8ce9f !important;
+  box-shadow: inset 0 1px 0 #ffffff, inset 0 -3px 0 #c2b888, 0 4px 0 #9c936b, 0 8px 24px rgba(254,245,209,0.2) !important;
+  font-weight: 700 !important;
+}
+.bk-key--pink .bk-key__face {
+  background: #f772e0 !important;
+  color: #ffffff !important;
+  border-color: #d156bd !important;
+  box-shadow: inset 0 1px 0 #ffa8f0, inset 0 -3px 0 #b339a0, 0 4px 0 #8c267c, 0 8px 24px rgba(247,114,224,0.3) !important;
+  font-weight: 700 !important;
+}
+.bk-key--purple .bk-key__face {
+  background: #8646f4 !important;
+  color: #ffffff !important;
+  border-color: #6a32c9 !important;
+  box-shadow: inset 0 1px 0 #aa78ff, inset 0 -3px 0 #521da6, 0 4px 0 #3b117e, 0 8px 24px rgba(134,70,244,0.3) !important;
+  font-weight: 700 !important;
+}
+.bk-key--gradient .bk-key__face {
+  background: linear-gradient(135deg, #ff8c00 0%, #ff0055 50%, #8a2be2 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -3px 0 rgba(0,0,0,0.4), 0 4px 0 rgba(0,0,0,0.6), 0 8px 24px rgba(255,0,85,0.3) !important;
+  font-weight: 700 !important;
+}
+.bk-key--dark .bk-key__face {
+  background: #1d1e22 !important;
+  color: #ffffff !important;
+  border-color: #32343a !important;
+  box-shadow: inset 0 1px 0 #454850, inset 0 -3px 0 #101114, 0 4px 0 #08090a, 0 8px 24px rgba(0,0,0,0.6) !important;
+}
+
+
+/* ═══════════════════════════════════════════
+   PHYSICS KEYBOARD SECTION  (.pbk-*)
+   ═══════════════════════════════════════════ */
+
+/* ── Section shell ── */
+
+.pbk-section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--color-black);
+  color: var(--color-off-white);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Minimal label rule — centered "reach me directly" between two lines ── */
+.pbk-label-rule {
+  position: relative;
+  z-index: 10;
+  padding-block: clamp(3rem, 4.5vw, 4.5rem);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pbk-label-rule::before,
+.pbk-label-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-off-white) 12%, transparent);
+  display: block;
+}
+
+.pbk-label-text {
+  white-space: nowrap;
+  opacity: 0.32;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Physics stage ── */
+.pbk-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 75dvh;       /* more room for keys to fall and play */
+  width: 100%;
+}
+
+/* Hidden canvas — present for MouseConstraint internals, invisible */
+.pbk-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* DOM key elements layer — positioned by physics body transforms each RAF */
+.pbk-keys-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* individual .bk-key elements re-enable their own */
+}
+
+/* ── Scroll hint — bridges keyboard → hire form ── */
+.pbk-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 2.5rem 0 3.5rem;
+  color: color-mix(in srgb, var(--color-off-white) 30%, transparent);
+  position: relative;
+  z-index: 10;
+}
+
+.pbk-hint::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 1.5rem;
+  background: color-mix(in srgb, var(--color-off-white) 18%, transparent);
+}
+
+.pbk-hint__text {
+  letter-spacing: 0.14em;
+  font-size: 9px;
+}
+
+@keyframes pbk-bounce {
+  0%, 100% { transform: translateY(0);   opacity: 0.7; }
+  55%       { transform: translateY(7px); opacity: 1;   }
+}
+
+.pbk-hint__arrow {
+  animation: pbk-bounce 2s ease-in-out infinite;
+}
+
+/* ── Visual bridge: dotted separator between the two sections ── */
+.pbk-section + .hire-section {
+  border-top: 1px dotted color-mix(in srgb, var(--color-gray) 35%, transparent);
+}
+
+/* ─────────────────────────────────────────────
+   BK KEY OVERRIDES — ensure keys are interactive
+   ───────────────────────────────────────────── */
+
+/* Keys inside the physics layer re-enable pointer events */
+.pbk-keys-layer .bk-key {
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════
+   END PHYSICS KEYBOARD SECTION
+   ═══════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════
+   SOCIAL PHYSICS SECTION  (.sph-*)
+   ═══════════════════════════════════════════ */
+
+/* ── Section shell ── */
+.sph-section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background-color: var(--color-black);
+  color: var(--color-off-white);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  /* subtle dotted rule separating form from social section */
+  border-top: 1px dotted color-mix(in srgb, var(--color-off-white) 12%, transparent);
+}
+
+/* ── Header ── */
+.sph-header {
+  position: relative;
+  z-index: 10;
+  padding-top: clamp(6rem, 9vw, 9rem);
+  padding-bottom: 2rem;
+  pointer-events: none;
+}
+
+.sph-eyebrow {
+  display: block;
+  opacity: 0.36;
+  margin-bottom: 1.5rem;
+}
+
+.sph-title {
+  font-family: var(--font-title);
+  font-size: clamp(4.5rem, 12vw, 12rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sph-title__line {
+  display: block;
+}
+
+.sph-title__em {
+  display: block;
+  font-family: var(--font-script);
+  font-style: normal;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 0.65;
+}
+
+.sph-subtitle {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-light);
+  opacity: 0.4;
+  line-height: 1.6;
+}
+
+/* ── Physics stage ── */
+.sph-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 70dvh;
+  width: 100%;
+}
+
+/* Hidden render canvas — only needed for MouseConstraint */
+.sph-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* DOM button layer */
+.sph-btns-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   BIG SOCIAL BUTTON  (.sph-btn)
+   ─────────────────────────────────────────────────────────────
+   Positioned via transform each RAF frame.
+   Not in JSX — created programmatically in SocialPhysics.tsx
+   ─────────────────────────────────────────────────────────────  */
+
+.sph-btn {
+  /* Sizing per variant — overridden by JS SIZE_DIM */
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  /* Appearance */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0 1.75rem;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, var(--color-off-white) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-off-white) 18%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+
+  box-shadow:
+    0 6px 32px color-mix(in srgb, #000 55%, transparent),
+    0 2px 8px  color-mix(in srgb, #000 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-off-white) 9%, transparent);
+
+  cursor: grab;
+  user-select: none;
+  pointer-events: auto;
+
+  /* Instant size (width/height set inline by JS) */
+  box-sizing: border-box;
+
+  /* Hover glow */
+  transition:
+    background    0.25s ease,
+    border-color  0.25s ease,
+    box-shadow    0.25s ease;
+
+  /* Prevent text selection while dragging */
+  -webkit-user-drag: none;
+}
+
+.sph-btn:hover {
+  background: color-mix(in srgb, var(--color-off-white) 13%, transparent);
+  border-color: color-mix(in srgb, var(--color-off-white) 34%, transparent);
+  box-shadow:
+    0 8px 40px color-mix(in srgb, #000 60%, transparent),
+    0 3px 12px color-mix(in srgb, #000 40%, transparent),
+    0 0 0 1px  color-mix(in srgb, var(--color-off-white) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-off-white) 14%, transparent);
+}
+
+.sph-btn:active,
+.sph-btn--pressed {
+  cursor: grabbing;
+}
+
+.sph-btn--pressed {
+  background: color-mix(in srgb, var(--color-off-white) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-off-white) 45%, transparent);
+}
+
+/* Text block */
+.sph-btn__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+/* Big label */
+.sph-btn__label {
+  font-family: var(--font-title);
+  font-size: clamp(1.2rem, 2.2vw, 2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  color: var(--color-off-white);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Handle / sub-label */
+.sph-btn__handle {
+  font-family: var(--font-label);
+  font-size: 9px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-off-white) 42%, transparent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1;
+}
+
+/* Arrow icon */
+.sph-btn__arrow {
+  font-size: 1.4rem;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-off-white) 40%, transparent);
+  flex-shrink: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sph-btn:hover .sph-btn__arrow {
+  color: var(--color-off-white);
+  transform: translate(2px, -2px);
+}
+
+/* Explicit height for each size (width is set inline by JS) */
+.sph-btn--md,
+.sph-btn--lg,
+.sph-btn--xl {
+  height: 88px;
+}
+
+/* ── Footer ── */
+.sph-footer {
+  margin-top: auto;
+  border-top: 1px solid color-mix(in srgb, var(--color-off-white) 10%, transparent);
+}
+
+.sph-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-block: 1.5rem 2rem;
+}
+
+.sph-footer__copy {
+  opacity: 0.28;
+}
+
+/* ═══════════════════════════════════════════
+   END SOCIAL PHYSICS SECTION
+   ═══════════════════════════════════════════ */
+
+
+/* ═══════════════════════════════════════════
+   CONTACT HERO  (.ctc-hero-*)
+   Full-viewport section: "Get In Touch" title
+   overlaid on Matter.js physics keyboard keys
+   ═══════════════════════════════════════════ */
+
+.ctc-hero {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-black);
+  color: var(--color-off-white);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: clamp(3rem, 5vw, 5rem);
+}
+
+/* ── Physics stage — absolute, covers full section ── */
+.ctc-hero__stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;              /* below the title overlay */
+}
+
+.ctc-hero__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Individual .bk-key elements live here; the layer itself passes mouse events */
+.ctc-hero__keys {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;    /* layer transparent to mouse */
+}
+
+/* Each key inside re-enables its own pointer-events */
+.ctc-hero__keys .bk-key {
+  pointer-events: auto;
+}
+
+/* ── Title overlay ── */
+.ctc-hero__head {
+  position: relative;
+  z-index: 10;
+  padding-top: clamp(8rem, 11vw, 11rem);
+  padding-bottom: clamp(2rem, 3vw, 3rem);
+  flex-shrink: 0;
+}
+
+/* ── Horizontal rule — thin line below title, leads into hire form ── */
+.ctc-hero__rule {
+  width: 100%;
+  height: 1px;
+  background: color-mix(in srgb, var(--color-off-white) 14%, transparent);
+  transform-origin: left center;
+}
+
+.ctc-hero__eyebrow {
+  display: block;
+  opacity: 0.38;
+  margin-bottom: 1.25rem;
+}
+
+/* Giant display title */
+.ctc-hero__title {
+  font-family: var(--font-title);
+  font-size: clamp(5rem, 16vw, 15rem);
+  line-height: 0.87;
+  text-transform: uppercase;
+  letter-spacing: -0.028em;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+
+  /* Text stays crisp above the physics layer */
+  mix-blend-mode: normal;
+}
+
+.ctc-hero__title-line {
+  display: block;
+}
+
+.ctc-hero__title-em {
+  display: block;
+  font-family: var(--font-script);
+  font-style: normal;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+/* Status pill — available indicator */
+.ctc-hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--hire-green, oklch(65% 0.16 145));
+  width: fit-content;
+  color: var(--hire-green, oklch(65% 0.16 145));
+  margin-bottom: 1rem;
+}
+
+@keyframes ctc-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  60%       { transform: scale(1.6); opacity: 0.4; }
+}
+
+.ctc-hero__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  animation: ctc-pulse 2.2s ease-in-out infinite;
+}
+
+.ctc-hero__desc {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-light);
+  color: color-mix(in srgb, var(--color-off-white) 45%, transparent);
+  line-height: 1.6;
+  max-width: 38ch;
+}
+
+/* ── Scroll hint — anchored to bottom centre ── */
+.ctc-hero__hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  color: color-mix(in srgb, var(--color-off-white) 28%, transparent);
+  pointer-events: none;
+}
+
+.ctc-hero__hint::before {
+  content: "";
+  position: absolute;
+  top: -1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 1.2rem;
+  background: color-mix(in srgb, var(--color-off-white) 18%, transparent);
+}
+
+.ctc-hero__hint-text {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+}
+
+@keyframes ctc-bounce {
+  0%, 100% { transform: translateY(0);   opacity: 0.65; }
+  55%       { transform: translateY(8px); opacity: 1;    }
+}
+
+.ctc-hero__hint-arrow {
+  animation: ctc-bounce 2s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   END CONTACT HERO
+   ═══════════════════════════════════════════ */

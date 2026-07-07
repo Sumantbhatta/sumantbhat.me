@@ -57,7 +57,7 @@ function HoverImagePreview({ project }: { project: Project | null }) {
       animate={{ opacity: project ? 1 : 0, scale: project ? 1 : 0.9 }}
       transition={{ duration: 0.28, ease: [0.625, 0.05, 0, 1] }}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {project && (
           <motion.div
             key={project.id}
@@ -351,7 +351,7 @@ export default function ProjectsPage() {
                   project={project}
                   index={index}
                   onHover={setHoveredProject}
-                  onLeave={() => setHoveredProject(null)}
+                  onLeave={() => setHoveredProject(prev => prev?.id === project.id ? null : prev)}
                   isAnyHovered={isAnyHovered}
                   activeCategory={activeCategory}
                 />

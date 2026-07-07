@@ -15,7 +15,7 @@ export default function AboutPage() {
       <LifeStory />
 
       {/* Career timeline */}
-      <AboutTimeline />
+      <AboutTimeline hideOutro />
     </>
   );
 }

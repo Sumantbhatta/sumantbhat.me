@@ -2,6 +2,31 @@
 // Central animation initializer - runs once on page load
 import Lenis from "lenis";
 
+let globalLenis: any = null;
+let globalLenisTicker: ((time: number) => void) | null = null;
+
+export function cleanupAnimations() {
+  if (typeof window === "undefined") return;
+  const gsap = (window as any).gsap;
+  if (!gsap) return;
+
+  const ScrollTrigger = (window as any).ScrollTrigger;
+  if (ScrollTrigger) {
+    // kill(true) forces pinned elements to revert their inline styles
+    ScrollTrigger.getAll().forEach((t: any) => t.kill(true));
+    ScrollTrigger.clearMatchMedia();
+  }
+
+  if (globalLenis) {
+    if (globalLenisTicker) {
+      gsap.ticker.remove(globalLenisTicker);
+      globalLenisTicker = null;
+    }
+    globalLenis.destroy();
+    globalLenis = null;
+  }
+}
+
 export function initAllAnimations() {
   if (typeof window === "undefined") return;
 
@@ -19,6 +44,7 @@ export function initAllAnimations() {
   const lenis = new Lenis({
     // autoRaf is intentionally omitted because we sync with gsap.ticker below
   });
+  globalLenis = lenis;
 
   if (ScrollTrigger) {
     // Disable native scroll restoration to prevent jumping/locking on refresh
@@ -29,9 +55,10 @@ export function initAllAnimations() {
     window.scrollTo(0, 0);
 
     lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time: number) => {
+    globalLenisTicker = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(globalLenisTicker);
     gsap.ticker.lagSmoothing(0);
   }
 
@@ -54,6 +81,9 @@ export function initAllAnimations() {
         initContentRevealScroll();
         initFeaturedProductsScroll();
         initParallax();
+        
+        // Final refresh to ensure all bounding boxes and heights are correct after DOM/fonts settle
+        ScrollTrigger.refresh();
       }
     });
   }

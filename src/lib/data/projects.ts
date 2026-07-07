@@ -47,7 +47,7 @@ export const PROJECTS: Project[] = [
     subtitle: "Modern web platform.",
     description: "Modern web platform focused on scalable digital services and workflow automation.",
     role: "Full Stack Developer",
-    status: "Live",
+    status: "Coming Soon",
     url: "https://egpg.app",
     websiteUrl: "https://egpg.app",
     bgColor: "bg-gray/40",

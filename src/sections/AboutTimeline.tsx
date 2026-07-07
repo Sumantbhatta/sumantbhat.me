@@ -23,6 +23,9 @@ interface Milestone {
   link: string;
   linkText?: string;
   side: "left" | "right";
+  image?: string;
+  images?: string[];
+  imageClassName?: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,6 +41,8 @@ const MILESTONES: Milestone[] = [
     body: "Scaled a multi-tenant Flutter + Firebase app to 10+ institutions and 500+ active users under a single codebase.",
     link: "https://play.google.com/store/apps/details?id=com.webflow.rip_college_app",
     side: "right",
+    image: "/images/projects/banner/srinivas.png",
+    imageClassName: "absolute inset-0 w-full h-full object-cover object-[-9px_center] scale-100 group-hover:scale-105",
   },
   {
     id: "alt-digital",
@@ -48,6 +53,8 @@ const MILESTONES: Milestone[] = [
     link: "https://drive.google.com/file/d/1xjJBeQL-JnDhtoEgtgdW8tFLROvFckIm/view?usp=sharing",
     linkText: "View Certificate ↗",
     side: "left",
+    image: "/images/projects/banner/ALT.png",
+    imageClassName: "absolute inset-0 w-full h-full object-cover object-top scale-100 group-hover:scale-105",
   },
   {
     id: "flione",
@@ -55,8 +62,15 @@ const MILESTONES: Milestone[] = [
     company: "Flione Innovation & Technology Pvt Ltd",
     title: "Mobile Application Developer (Freelance)",
     body: "Own the full Flutter product lifecycle — UI to deployment — integrating REST APIs, Firebase, and GCP for Android & iOS.",
-    link: "#",
+    link: "/projects",
+    linkText: "View Apps ↗",
     side: "right",
+    images: [
+      "/images/projects/banner/ksvp.png",
+      "/images/projects/banner/nexsti.png",
+      "/images/projects/banner/sanskaradhama.png",
+      "/images/projects/banner/scanai.png"
+    ],
   },
   {
     id: "connectia",
@@ -64,8 +78,15 @@ const MILESTONES: Milestone[] = [
     company: "Connectia Technology",
     title: "Full Stack Developer",
     body: "Deliver end-to-end client solutions with Node.js, Express, MongoDB, and React — from RESTful API design to production UI.",
-    link: "#",
+    link: "/projects",
+    linkText: "View Projects ↗",
     side: "left",
+    images: [
+      "/images/projects/banner/amrut.png",
+      "/images/projects/banner/teleseenapp.png",
+      "/images/projects/banner/handyman.png",
+      "/images/projects/banner/yiacoapp.png"
+    ],
   },
 ];
 
@@ -81,16 +102,41 @@ function CinematicOverlay() {
 // PROJECT CARD
 // ─────────────────────────────────────────────────────────────────────────────
 
-function ProjectCard({ link, linkText = "View Live Project ↗" }: { link: string; linkText?: string }) {
-  const isExternal = link !== "#";
+function ProjectCard({ link, linkText = "View Live Project ↗", image, images, imageClassName }: { link: string; linkText?: string; image?: string; images?: string[]; imageClassName?: string }) {
+  const isExternal = link !== "#" && link.startsWith("http");
   return (
-    <div className="about-timeline__card">
-      <div className="about-timeline__card-inner" aria-hidden="true">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <span key={i} />
-        ))}
-      </div>
-      <div className="about-timeline__card-overlay">
+    <div className="about-timeline__card relative group overflow-hidden">
+      {images && images.length > 0 ? (
+        <>
+          <div className="absolute inset-0 bg-black/40 z-[1] group-hover:bg-black/10 transition-colors duration-500 mix-blend-multiply" />
+          <div className={`absolute inset-0 grid gap-[2px] p-1 ${images.length > 2 ? "grid-cols-2 grid-rows-2" : "grid-cols-2"} scale-100 group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]`}>
+            {images.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt="Project banner collage"
+                className="w-full h-full object-cover object-left rounded-[2px] grayscale-[0.6] group-hover:grayscale-0 transition-all duration-700"
+              />
+            ))}
+          </div>
+        </>
+      ) : image ? (
+        <>
+          <div className="absolute inset-0 bg-black/40 z-[1] group-hover:bg-black/10 transition-colors duration-500 mix-blend-multiply" />
+          <img
+            src={image}
+            alt="Project banner"
+            className={`transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] grayscale-[0.6] group-hover:grayscale-0 ${imageClassName || "absolute inset-0 w-full h-full object-cover scale-100 group-hover:scale-105"}`}
+          />
+        </>
+      ) : (
+        <div className="about-timeline__card-inner" aria-hidden="true">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <span key={i} />
+          ))}
+        </div>
+      )}
+      <div className="about-timeline__card-overlay relative z-10">
         <a
           href={link}
           target={isExternal ? "_blank" : undefined}
@@ -147,7 +193,7 @@ function TimelineNode({ milestone, index }: TimelineNodeProps) {
       animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.8, delay: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <ProjectCard link={milestone.link} linkText={milestone.linkText} />
+      <ProjectCard link={milestone.link} linkText={milestone.linkText} image={milestone.image} images={milestone.images} imageClassName={milestone.imageClassName} />
     </motion.div>
   );
 
@@ -264,7 +310,7 @@ function TimelineOutro() {
 // ROOT COMPONENT
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function AboutTimeline() {
+export default function AboutTimeline({ hideOutro = false }: { hideOutro?: boolean } = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -335,7 +381,7 @@ export default function AboutTimeline() {
         </motion.div>
 
         {/* Outro CTA */}
-        <TimelineOutro />
+        {!hideOutro && <TimelineOutro />}
       </motion.div>
     </section>
   );

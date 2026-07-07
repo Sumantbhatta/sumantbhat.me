@@ -1,7 +1,12 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname?.includes("contact")) {
+    return null;
+  }
   return (
     <footer
       className="relative overflow-hidden text-off-white bg-black flex flex-col items-center justify-center w-full aspect-video"
