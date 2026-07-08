@@ -17,6 +17,9 @@ export const metadata: Metadata = {
       "Premium caviar sourced from pristine waters worldwide. Experience the finest caviar from Idaho, Poland, and Madagascar.",
     images: ["/images/shop/files/sumanth_112547.png"],
   },
+  icons: {
+    icon: '/images/webicon.png',
+  },
 };
 
 export default function RootLayout({

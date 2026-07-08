@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 
-type CursorState = "default" | "hover" | "text" | "hidden";
+type CursorState = "default" | "hover" | "text" | "hidden" | "face";
 
 /**
  * CustomCursor
@@ -94,11 +94,18 @@ export function CustomCursor() {
       const target = (e.target as HTMLElement).closest(
         "a, button, [role='button'], [data-cursor='hover'], label, select, summary"
       );
+      const isFaceEl = (e.target as HTMLElement).closest(
+        "[data-cursor='face']"
+      );
       const isTextInput = (e.target as HTMLElement).closest(
         "input[type='text'], input[type='email'], textarea"
       );
       if (isTextInput) {
         setState("text");
+        hoveredElRef.current = null;
+      } else if (isFaceEl) {
+        // Over a face/portrait — show only the ring, hide the dot
+        setState("face");
         hoveredElRef.current = null;
       } else if (target) {
         setState("hover");
@@ -126,6 +133,7 @@ export function CustomCursor() {
   const isHover  = state === "hover";
   const isText   = state === "text";
   const isHidden = state === "hidden";
+  const isFace   = state === "face";
 
   return (
     <>
@@ -141,7 +149,8 @@ export function CustomCursor() {
           animate={{
             width:   isText ? 2  : isHover ? 4  : 8,
             height:  isText ? 20 : isHover ? 4  : 8,
-            opacity: isHidden ? 0 : 1,
+            // Hide dot when: hidden, or hovering a face
+            opacity: isHidden || isFace ? 0 : 1,
             // oklch() is not animatable in Framer Motion — use sRGB hex equivalent
             backgroundColor: isHover ? "#e8623a" : "#30241d",
           }}

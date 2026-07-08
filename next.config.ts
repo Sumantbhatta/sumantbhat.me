@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   },
   // Suppress hydration warnings for custom elements (dotlottie-player)
   reactStrictMode: true,
+  devIndicators: false,
   // Allow connections from local network for testing on mobile
   allowedDevOrigins: ['192.168.1.38', 'localhost'],
 };

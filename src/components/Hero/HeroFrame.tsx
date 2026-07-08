@@ -176,6 +176,162 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         className="object-cover relative z-10"
       />
 
+      {/* ── 1b. Notebook intro text ─────────────────────────────────────────── */}
+      {/*
+        Positioned in the empty left zone of the notebook paper (~left 22%,
+        top 26%). Fades in alongside the face so it feels like one reveal.
+        Uses ONLY existing fonts & colors — no new design tokens introduced.
+      */}
+      <motion.div
+        key={isVideoVisible ? "waiting" : "playing"}
+        className="absolute pointer-events-none select-none"
+        style={{
+          left: "22%",
+          top: "26%",
+          width: "24%",
+          zIndex: 15,
+        }}
+        initial="hidden"
+        animate={!isVideoVisible ? "visible" : "hidden"}
+        variants={{
+          hidden: { opacity: 0.99 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.15,
+              delayChildren: 0.1,
+            },
+          },
+        }}
+      >
+        {/* "Hi, I'm!" — Smooth slide from left */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, x: -15, rotate: -1.5 },
+            visible: { 
+              opacity: 0.88, 
+              x: 0, 
+              rotate: -1.5,
+              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+            }
+          }}
+          style={{
+            fontFamily: "sloop-script-one, cursive",
+            fontSize: "2.4vw",
+            color: "#30241d",
+            lineHeight: 1,
+            marginBottom: "0.2em",
+            display: "inline-block",
+            transformOrigin: "left center",
+          }}
+        >
+          Hi, I&apos;m!
+        </motion.div>
+        <br />
+        
+        {/* SUMANTH BHAT — Punchy spring pop-up */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 20, scale: 0.95, rotate: -2 },
+            visible: { 
+              opacity: 1, 
+              y: 0, 
+              scale: 1, 
+              rotate: 0,
+              transition: { type: "spring", stiffness: 100, damping: 15, mass: 1 } 
+            }
+          }}
+          style={{
+            fontFamily: "interstate-condensed, sans-serif",
+            fontSize: "4vw",
+            fontWeight: 700,
+            color: "#202020",
+            lineHeight: 0.92,
+            textTransform: "uppercase",
+            letterSpacing: "-0.02em",
+            marginBottom: "0.35em",
+            display: "inline-block",
+            transformOrigin: "left bottom",
+            textShadow: "0.5px 0.5px 0 rgba(32,32,32,0.18), -0.3px 0.3px 0 rgba(32,32,32,0.09)",
+          }}
+        >
+          SUMANTH<br />BHAT
+        </motion.div>
+        <br />
+
+        {/* FULL STACK DEV • FLUTTER GUY — Smooth slide in */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, x: -15 },
+            visible: { 
+              opacity: 0.72, 
+              x: 0, 
+              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+            }
+          }}
+          style={{
+            fontFamily: "interstate-condensed, sans-serif",
+            fontSize: "1vw",
+            fontWeight: 700,
+            color: "#30241d",
+            textTransform: "uppercase",
+            letterSpacing: "0.14em",
+            marginBottom: "0.7em",
+            display: "inline-block",
+          }}
+        >
+          Full Stack Dev&nbsp;•&nbsp;Flutter Guy
+        </motion.div>
+        <br />
+
+        {/* Short tagline — Gentle fade up */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 12 },
+            visible: { 
+              opacity: 0.6, 
+              y: 0, 
+              transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } 
+            }
+          }}
+          style={{
+            fontFamily: "interstate, sans-serif",
+            fontSize: "0.85vw",
+            fontWeight: 300,
+            color: "#30241d",
+            lineHeight: 1.5,
+            maxWidth: "92%",
+            display: "inline-block",
+          }}
+        >
+          Building beautiful apps &amp;<br />delightful digital experiences.
+        </motion.div>
+        <br />
+
+        {/* "yep, Flutter is my thing!" — Playful bouncy pop at the end */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, scale: 0.6, rotate: -8 },
+            visible: { 
+              opacity: 0.5, 
+              scale: 1, 
+              rotate: 2, 
+              transition: { type: "spring", stiffness: 160, damping: 10, mass: 0.8 } 
+            }
+          }}
+          style={{
+            fontFamily: "sloop-script-one, cursive",
+            fontSize: "1.3vw",
+            color: "#30241d",
+            marginTop: "1.8em",
+            display: "inline-block",
+            transformOrigin: "center center",
+          }}
+        >
+          yep, Flutter is my thing!
+        </motion.div>
+      </motion.div>
+
       {/* ── 2. Face system ─────────────────────────────────────────────────── */}
       {/*
         Motion layer stack (bottom → top):
@@ -272,6 +428,21 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         aria-label="Explore my work"
         title="Explore my work"
       />
+
+      {/* ── Face cursor zone: transparent overlay so the cursor dot hides over the face ── */}
+      {isFaceVisible && (
+        <div
+          data-cursor="face"
+          className="absolute z-40 pointer-events-auto"
+          style={{
+            // Match the face image container position/size from above
+            width: "29%",
+            left: "37%",
+            bottom: isMounted && isTouchDevice ? "14.5%" : "15%",
+            aspectRatio: "1/1",
+          }}
+        />
+      )}
     </div>
   );
 }
