@@ -11,19 +11,20 @@ import { useEffect, useState, useRef, useCallback } from "react";
 
 interface HeroFrameProps {
   activeDirection: number;
+  hasSeenIntro?: boolean;
 }
 
 // Normalized gaze vectors per direction zone (for the head-weight nudge).
 const DIRECTION_GAZE: Record<number, { x: number; y: number }> = {
   1: { x: -1, y: -1 },
-  2: { x:  0, y: -1 },
-  3: { x:  1, y: -1 },
-  4: { x: -1, y:  0 },
-  5: { x:  0, y:  0 },
-  6: { x:  1, y:  0 },
-  7: { x: -1, y:  1 },
-  8: { x:  0, y:  1 },
-  9: { x:  1, y:  1 },
+  2: { x: 0, y: -1 },
+  3: { x: 1, y: -1 },
+  4: { x: -1, y: 0 },
+  5: { x: 0, y: 0 },
+  6: { x: 1, y: 0 },
+  7: { x: -1, y: 1 },
+  8: { x: 0, y: 1 },
+  9: { x: 1, y: 1 },
 };
 
 // Manual vertical alignment per face image.
@@ -42,9 +43,23 @@ const FACE_Y_OFFSETS: Record<number, string> = {
 
 const DIRECTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
-export function HeroFrame({ activeDirection }: HeroFrameProps) {
-  const [isVideoVisible, setIsVideoVisible] = useState(true);
-  const [isFaceVisible, setIsFaceVisible] = useState(false);
+export function HeroFrame({ activeDirection, hasSeenIntro = false }: HeroFrameProps) {
+  // Sync server-side cookie state with client-side sessionStorage state to completely avoid hydration flashes.
+  // During hydration (first load), both will match. During SPA navigation, we can safely read sessionStorage.
+  const [isVideoVisible, setIsVideoVisible] = useState(() => {
+    if (typeof sessionStorage !== "undefined") {
+      return sessionStorage.getItem("hero_intro_seen") !== "1" && !hasSeenIntro;
+    }
+    return !hasSeenIntro;
+  });
+  
+  const [isFaceVisible, setIsFaceVisible] = useState(() => {
+    if (typeof sessionStorage !== "undefined") {
+      return sessionStorage.getItem("hero_intro_seen") === "1" || hasSeenIntro;
+    }
+    return hasSeenIntro;
+  });
+  
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -75,7 +90,7 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
   }, [activeDirection]);
 
   const effectiveDirection = isMounted && isTouchDevice ? 5 : visibleDirection;
-  const effectiveActive    = isMounted && isTouchDevice ? 5 : activeDirection;
+  const effectiveActive = isMounted && isTouchDevice ? 5 : activeDirection;
 
   // ── Raw mouse tracking ────────────────────────────────────────────────────
   const mouseX = useMotionValue(0);
@@ -84,7 +99,7 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (isTouchDevice) return;
-      mouseX.set((e.clientX / window.innerWidth)  * 2 - 1);
+      mouseX.set((e.clientX / window.innerWidth) * 2 - 1);
       mouseY.set((e.clientY / window.innerHeight) * 2 - 1);
     };
     window.addEventListener("mousemove", onMove, { passive: true });
@@ -161,7 +176,11 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
               setIsFaceVisible(true);
             }
           }}
-          onEnded={() => setIsVideoVisible(false)}
+          onEnded={() => {
+            sessionStorage.setItem("hero_intro_seen", "1");
+            document.cookie = "hero_intro_seen=1; path=/"; // Let the server know for future hard reloads
+            setIsVideoVisible(false);
+          }}
           className="absolute inset-0 w-full h-full object-cover z-20"
         />
       )}
@@ -208,11 +227,11 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         <motion.div
           variants={{
             hidden: { opacity: 0, x: -15, rotate: -1.5 },
-            visible: { 
-              opacity: 0.88, 
-              x: 0, 
+            visible: {
+              opacity: 0.88,
+              x: 0,
               rotate: -1.5,
-              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
             }
           }}
           style={{
@@ -228,17 +247,17 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
           Hi, I&apos;m!
         </motion.div>
         <br />
-        
+
         {/* SUMANTH BHAT — Punchy spring pop-up */}
         <motion.div
           variants={{
             hidden: { opacity: 0, y: 20, scale: 0.95, rotate: -2 },
-            visible: { 
-              opacity: 1, 
-              y: 0, 
-              scale: 1, 
+            visible: {
+              opacity: 1,
+              y: 0,
+              scale: 1,
               rotate: 0,
-              transition: { type: "spring", stiffness: 100, damping: 15, mass: 1 } 
+              transition: { type: "spring", stiffness: 100, damping: 15, mass: 1 }
             }
           }}
           style={{
@@ -263,10 +282,10 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         <motion.div
           variants={{
             hidden: { opacity: 0, x: -15 },
-            visible: { 
-              opacity: 0.72, 
-              x: 0, 
-              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+            visible: {
+              opacity: 0.72,
+              x: 0,
+              transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
             }
           }}
           style={{
@@ -288,10 +307,10 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         <motion.div
           variants={{
             hidden: { opacity: 0, y: 12 },
-            visible: { 
-              opacity: 0.6, 
-              y: 0, 
-              transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } 
+            visible: {
+              opacity: 0.6,
+              y: 0,
+              transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] }
             }
           }}
           style={{
@@ -312,11 +331,11 @@ export function HeroFrame({ activeDirection }: HeroFrameProps) {
         <motion.div
           variants={{
             hidden: { opacity: 0, scale: 0.6, rotate: -8 },
-            visible: { 
-              opacity: 0.5, 
-              scale: 1, 
-              rotate: 2, 
-              transition: { type: "spring", stiffness: 160, damping: 10, mass: 0.8 } 
+            visible: {
+              opacity: 0.5,
+              scale: 1,
+              rotate: 2,
+              transition: { type: "spring", stiffness: 160, damping: 10, mass: 0.8 }
             }
           }}
           style={{

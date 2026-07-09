@@ -25,20 +25,21 @@ export default function Projects() {
       {/* ── MOBILE: simple grid ─────────────────────────── */}
       <div className="block md:hidden">
         <div className="custom-grid gap-y-12">
-          {FEATURED_PROJECTS.map((project) => (
-            <div className="col-span-4 flex flex-col gap-4" key={project.handle}>
+          {FEATURED_PROJECTS.map((project, index) => (
+            <div className="col-span-4 flex flex-col gap-4 mobile-project-reveal opacity-0" key={project.handle}>
               <article className="group relative">
                 <a
                   href={project.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block relative overflow-hidden bg-gray/10 rounded-2xl`}
+                  className={`block relative overflow-hidden bg-gray/10 rounded-none`}
                 >
                   <div className="aspect-[4/3] relative">
                     <Image
                       src={project.leftImage}
                       alt={project.title}
                       fill
+                      priority={index === 0}
                       className="object-contain p-4"
                       unoptimized={project.leftImage.endsWith('.gif')}
                     />
@@ -52,8 +53,8 @@ export default function Projects() {
               </article>
 
               {/* Stack the second image underneath for mobile */}
-              <div className={`w-full aspect-[4/3] relative bg-gray/10 rounded-2xl overflow-hidden`}>
-                <ImageLightbox src={project.rightImage} alt={`${project.title} Banner`} />
+              <div className={`w-full aspect-[4/3] relative bg-gray/10 rounded-none overflow-hidden`}>
+                <ImageLightbox src={project.rightImage} alt={`${project.title} Banner`} priority={index === 0} />
               </div>
             </div>
           ))}
@@ -72,10 +73,20 @@ export default function Projects() {
               <div className="custom-grid h-full">
                 <div className="col-start-5 col-span-4 pointer-events-auto h-full relative z-40">
                   <div
-                    className="group flex flex-col justify-between items-center text-center custom-border border-2 bg-off-white hover:bg-black transition-colors duration-300 relative py-8 px-4 h-full rounded-3xl"
+                    className="group flex flex-col justify-between items-center text-center custom-border border-2 bg-off-white hover:bg-black transition-colors duration-300 relative py-8 px-4 h-full rounded-none overflow-hidden"
                   >
+                    {/* Invisible link covering the entire card */}
+                    <a
+                      id={`fixed-product-info-${SECTION_ID}`}
+                      href={FEATURED_PROJECTS[0].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 z-10"
+                      aria-label="Visit project site"
+                    ></a>
+
                     {/* Status tag & App Link */}
-                    <div className="relative flex items-center justify-center gap-2">
+                    <div className="relative flex items-center justify-center gap-2 z-20">
                       <div className="relative flex items-center justify-center px-4 py-1.5 border border-gray/20 group-hover:border-white/20 rounded-lg transition-colors duration-300">
                         <span className="text-gray label whitespace-nowrap z-10 transition-colors duration-300 group-hover:text-white">
                           <span id={`sourcing-tag-${SECTION_ID}`}>
@@ -102,7 +113,7 @@ export default function Projects() {
                     </div>
 
                     {/* Title + Role */}
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 relative z-20 pointer-events-none">
                       <h3
                         id={`product-title-${SECTION_ID}`}
                         className="medium text-black transition-colors duration-300 group-hover:text-white text-3xl"
@@ -118,22 +129,20 @@ export default function Projects() {
                     </div>
 
                     {/* Subtitle / CTA */}
-                    <div className="relative w-full">
+                    <div className="relative w-full z-20 pointer-events-none">
                       <p
                         id={`product-subtitle-${SECTION_ID}`}
                         className="regular text-gray transition-opacity duration-300 group-hover:opacity-0 max-w-[80%] mx-auto"
                       >
                         {FEATURED_PROJECTS[0].subtitle}
                       </p>
-                      <a
-                        id={`fixed-product-info-${SECTION_ID}`}
-                        href={FEATURED_PROJECTS[0].url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      
+                      {/* Fake CTA that just shows on hover, but the whole card is the real link */}
+                      <span
                         className="regular absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center text-gray opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white"
                       >
                         Visit Live Site ↗
-                      </a>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -142,7 +151,7 @@ export default function Projects() {
           </div>
 
           {/* Product rows (scroll-driven) */}
-          {FEATURED_PROJECTS.map((project) => (
+          {FEATURED_PROJECTS.map((project, index) => (
             <div
               key={project.handle}
               className="product-row custom-grid min-h-[85dvh]"
@@ -155,7 +164,7 @@ export default function Projects() {
               data-section-id={SECTION_ID}
             >
               {/* Left: primary image/gif */}
-              <div className={`col-span-4 relative z-10 group overflow-hidden bg-gray/10 h-full rounded-3xl flex items-center justify-center p-8`}>
+              <div className={`col-span-4 relative z-10 group overflow-hidden bg-gray/10 h-full rounded-none flex items-center justify-center p-8`}>
                 <a
                   href={project.url}
                   target="_blank"
@@ -166,15 +175,18 @@ export default function Projects() {
                     src={project.leftImage}
                     alt={project.title}
                     fill
-                    className="object-contain p-4"
+                    priority={index === 0}
+                    className="object-contain p-4 project-parallax-img scale-110"
                     unoptimized={project.leftImage.endsWith('.gif')}
                   />
                 </a>
               </div>
 
               {/* Right: promotional banner - Exactly like left side! */}
-              <div className={`col-start-9 col-span-4 relative z-10 group overflow-hidden bg-gray/10 h-full rounded-3xl flex items-center justify-center p-8`}>
-                <ImageLightbox src={project.rightImage} alt={`${project.title} Banner`} />
+              <div className={`col-start-9 col-span-4 relative z-10 group overflow-hidden bg-gray/10 h-full rounded-none flex items-center justify-center p-8`}>
+                <div className="w-full h-full relative project-parallax-img scale-110">
+                  <ImageLightbox src={project.rightImage} alt={`${project.title} Banner`} priority={index === 0} />
+                </div>
               </div>
             </div>
           ))}

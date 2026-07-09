@@ -42,7 +42,11 @@ export function initAllAnimations() {
 
   // Initialize Lenis for smooth scrolling
   const lenis = new Lenis({
-    // autoRaf is intentionally omitted because we sync with gsap.ticker below
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom premium easing curve
+    smoothWheel: true,
+    wheelMultiplier: 1, // Normalized wheel scrolling
+    touchMultiplier: 2, // Natural touch drag
   });
   globalLenis = lenis;
 
@@ -496,6 +500,44 @@ export function initFeaturedProductsScroll(scope: Document | Element = document)
   });
 
   updateContent(0, false);
+
+  // Mobile Project Reveal
+  const mobileProjects = scope.querySelectorAll<HTMLElement>(".mobile-project-reveal");
+  mobileProjects.forEach((proj) => {
+    gsap.fromTo(
+      proj,
+      { y: 50, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: proj,
+          start: "top 85%",
+        },
+      }
+    );
+  });
+
+  // Parallax for side images
+  const parallaxImages = scope.querySelectorAll<HTMLElement>(".project-parallax-img");
+  parallaxImages.forEach((img) => {
+    gsap.fromTo(
+      img,
+      { yPercent: -15 },
+      {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: img.closest(".product-row") || img.closest(".group"),
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      }
+    );
+  });
 
   // Pin animation for the central card
   const productPin = scope.querySelector<HTMLElement>("[data-featured-product-pin]");

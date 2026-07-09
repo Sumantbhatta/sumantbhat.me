@@ -264,7 +264,7 @@ function TimelineOutro() {
   const isInView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
 
   return (
-    <div ref={ref} className="about-timeline__outro">
+    <div ref={ref} className="about-timeline__outro" data-header-theme="dark">
       {/* Thin horizontal rule */}
       <motion.div
         className="about-timeline__outro-rule"
@@ -337,7 +337,7 @@ export default function AboutTimeline({ hideOutro = false }: { hideOutro?: boole
   );
 
   return (
-    <section className="about-timeline__section" id="about">
+    <section className="about-timeline__section" id="about" data-header-theme="light">
       <CinematicOverlay />
 
       <motion.div

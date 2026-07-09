@@ -11,21 +11,25 @@ export default function AnimationBootstrap() {
     // 1. Immediately clean up any previous animations/ScrollTriggers from the previous route
     cleanupAnimations();
 
-    // 2. Wait a tick for Next.js to finish painting the new route's DOM
+    // 2. Wait for the browser to guarantee a DOM paint
+    let raf1: number, raf2: number;
     const run = () => {
       if (typeof (window as any).gsap !== "undefined") {
         initAllAnimations();
       } else {
-        setTimeout(run, 50);
+        raf1 = requestAnimationFrame(run);
       }
     };
     
-    // Slight delay ensures the new page layout is actually in the DOM before we bind triggers
-    const timeoutId = setTimeout(run, 50);
+    // Double requestAnimationFrame ensures layout is 100% stable before GSAP calculates heights
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(run);
+    });
 
     // 3. Cleanup function when component unmounts or before the next route change runs this effect again
     return () => {
-      clearTimeout(timeoutId);
+      cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
       cleanupAnimations();
     };
   }, [pathname]);

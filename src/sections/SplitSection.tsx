@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-const SPLIT_VIDEO_SRC = "/images/international_projects.mp4"; // TODO: Drop your custom video file here
+const SPLIT_VIDEO_SRC = "/images/my_showcase.mp4";
 
 export default function SplitSection() {
   return (

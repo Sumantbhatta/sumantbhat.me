@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ImageLightbox({ src, alt }: { src: string; alt: string }) {
+export default function ImageLightbox({ src, alt, priority }: { src: string; alt: string; priority?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const isGif = src.endsWith(".gif");
 
@@ -64,6 +64,7 @@ export default function ImageLightbox({ src, alt }: { src: string; alt: string }
           src={src}
           alt={alt}
           fill
+          priority={priority}
           className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
           unoptimized={isGif}
         />

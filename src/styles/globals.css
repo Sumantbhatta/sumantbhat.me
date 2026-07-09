@@ -136,7 +136,7 @@ body {
    ───────────────────────────────────────── */
 .display {
   font-family: var(--font-title);
-  font-size: var(--text-6xl);
+  font-size: clamp(3rem, 12vw, var(--text-6xl));
   line-height: 1;
   text-transform: uppercase;
 }
@@ -149,7 +149,7 @@ body {
 
 .display-cursive {
   font-family: var(--font-script);
-  font-size: var(--text-6xl);
+  font-size: clamp(3.5rem, 14vw, var(--text-6xl));
   line-height: 1;
 }
 
@@ -258,6 +258,11 @@ body {
 .navigation[data-header-theme="dark"] dotlottie-player,
 .navigation[data-header-theme="dark"] .lottie-wrapper {
   filter: brightness(0.15) grayscale(100%);
+}
+
+.navigation.menu-open dotlottie-player,
+.navigation.menu-open .lottie-wrapper {
+  filter: brightness(1) grayscale(0) !important;
 }
 
 dotlottie-player,
@@ -674,7 +679,7 @@ body.ready {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem 8rem;
+  padding: 0 1rem 8rem;
 }
 
 @media (min-width: 48rem) {
@@ -686,7 +691,7 @@ body.ready {
 /* Spine */
 .about-timeline__spine {
   position: absolute;
-  left: 1.5rem;
+  left: 1rem;
   top: 0;
   bottom: 0;
   width: 1px;
@@ -720,7 +725,7 @@ body.ready {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-left: 3rem;
+  padding-left: 2.25rem;
   padding-bottom: 9rem;
 }
 
