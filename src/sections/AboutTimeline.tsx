@@ -261,46 +261,46 @@ function TimelineSpine({
 
 function TimelineOutro() {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-10% 0px -10% 0px" });
 
   return (
-    <div ref={ref} className="about-timeline__outro" data-header-theme="dark">
-      {/* Thin horizontal rule */}
-      <motion.div
-        className="about-timeline__outro-rule"
-        initial={{ scaleX: 0, transformOrigin: "left" }}
-        animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
-        transition={{ duration: 1.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      />
-
-      <div className="about-timeline__outro-inner">
-        {/* Left: heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
-          transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          <span className="about-timeline__outro-eyebrow">The person behind the work</span>
-          <h2 className="about-timeline__outro-heading">
-            Wanna know<br />
-            more about <em>me?</em>
+    <div ref={ref} className="relative w-full py-32 md:py-48 mt-20 flex flex-col items-center justify-center group cursor-pointer overflow-hidden border-t border-black/10" data-header-theme="dark">
+      <Link href="/about" className="absolute inset-0 z-20" aria-label="About Me"></Link>
+      
+      {/* Background fill animation on hover */}
+      <div className="absolute inset-0 bg-[#0a0a0a] scale-y-0 group-hover:scale-y-100 origin-bottom transition-transform duration-[0.8s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-0" />
+      
+      {/* Text Container with mix-blend-difference */}
+      <div className="relative z-10 flex flex-col items-center justify-center w-full pointer-events-none mix-blend-difference text-[#f4f4f5] px-4">
+        
+        {/* Eyebrow */}
+        <span className="label mb-6 tracking-[0.25em] uppercase opacity-60 group-hover:opacity-100 transition-opacity duration-[0.8s]">
+          The person behind the work
+        </span>
+        
+        {/* Animated Headline Wrapper */}
+        <div className="relative overflow-hidden w-full flex items-center justify-center">
+          
+          <h2 className="display text-[12vw] md:text-[8.5vw] leading-none text-center uppercase tracking-tight transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:-translate-y-[120%]">
+            Who is Sumanth?
           </h2>
-        </motion.div>
-
-        {/* Right: CTA button */}
-        <motion.div
-          className="about-timeline__outro-cta"
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-          transition={{ duration: 0.7, delay: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-        >
-          <Link href="/about" className="about-timeline__outro-btn">
-            <span>About Me</span>
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          
+          <h2 className="display text-[12vw] md:text-[8.5vw] leading-none text-center uppercase tracking-tight transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] translate-y-[120%] group-hover:translate-y-0 absolute top-0 left-0 w-full h-full flex items-center justify-center">
+            Read My Story
+          </h2>
+          
+        </div>
+      </div>
+      
+      {/* Floating Arrow */}
+      <div className="absolute bottom-10 right-10 md:bottom-16 md:right-16 z-10 mix-blend-difference text-[#f4f4f5] pointer-events-none hidden md:block">
+        <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-current flex items-center justify-center overflow-hidden relative group-hover:scale-110 transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
+           <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 md:w-10 md:h-10 transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:translate-x-16 group-hover:-translate-y-16">
               <path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
-        </motion.div>
+           </svg>
+           <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute w-6 h-6 md:w-10 md:h-10 -translate-x-16 translate-y-16 transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:translate-x-0 group-hover:translate-y-0">
+              <path d="M1 13L13 1M13 1H4M13 1V10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+           </svg>
+        </div>
       </div>
     </div>
   );

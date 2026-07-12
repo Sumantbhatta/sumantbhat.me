@@ -316,7 +316,7 @@ function ScatteredKey({ def, onDrop, restored, boundsRef }: { def: ScatteredKeyD
         rotate: def.isFallen ? undefined : `${def.rotate}deg`,
         zIndex: 5,
       }}
-      className="hidden xl:flex p-[3px] rounded-xl md:rounded-2xl bg-[#090a0c] border border-white/10 shadow-2xl cursor-grab active:cursor-grabbing"
+      className="hidden xl:flex p-[3px] rounded-xl md:rounded-2xl bg-[#090a0c] border border-white/10 shadow-2xl cursor-grab active:cursor-grabbing select-none"
       initial={def.isFallen ? undefined : { y: -400, opacity: 0, rotate: def.rotate - 60, scale: 0.5 }}
       whileInView={def.isFallen ? { rotate: def.rotate } : { y: 0, opacity: 1, rotate: def.rotate, scale: 1 }}
       viewport={{ once: true, margin: "50px" }}
@@ -487,7 +487,7 @@ function MechanicalKey({ def, hasFallen, restored, registerSocket }: { def: KDef
 
 function KeyFooter({ hasFallen, setHasFallen, restoredKeys, registerSocket, isShaking, isUnlocked, isMobile }: { hasFallen: boolean, setHasFallen: (v: boolean) => void, restoredKeys: Set<string>, registerSocket: (id: string, rect: DOMRect) => void, isShaking: boolean, isUnlocked: boolean, isMobile: boolean }) {
   return (
-    <div className="hire-key-footer container relative mt-2 md:mt-4 mb-4 z-20" aria-label="Contact links and mechanical keyboard console">
+    <div className="hire-key-footer container relative mt-2 md:mt-4 mb-4 z-20 select-none" aria-label="Contact links and mechanical keyboard console">
 
       {/* Polite Instruction Message */}
       <AnimatePresence>
@@ -623,7 +623,7 @@ function ContactHireSection() {
 
   const boundsRef = useRef<HTMLDivElement>(null);
   const [isShaking, setIsShaking] = useState(false);
-  
+
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -683,10 +683,10 @@ function ContactHireSection() {
     e.preventDefault();
     if (!isValid) return;
     setSubmitting(true);
-    
+
     try {
       const emailjs = (await import("@emailjs/browser")).default;
-      
+
       // These keys should be added to your .env.local file
       const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
       const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
@@ -695,20 +695,20 @@ function ContactHireSection() {
       if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
         console.warn("EmailJS keys are missing from environment variables!");
         // Simulate delay so UI still shows success even if keys aren't set yet
-        await new Promise((r) => setTimeout(r, 1100)); 
+        await new Promise((r) => setTimeout(r, 1100));
       } else {
         await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-          from_name:    form.name,
-          service:      form.service,
+          from_name: form.name,
+          service: form.service,
           project_type: form.projectType,
-          budget:       form.budget,
-          timeline:     form.timeline,
-          contact:      form.contact,
+          budget: form.budget,
+          timeline: form.timeline,
+          contact: form.contact,
         }, {
           publicKey: PUBLIC_KEY,
         });
       }
-      
+
       setSubmitted(true);
     } catch (error: any) {
       console.error("Failed to send email:", error?.text || error?.message || error);

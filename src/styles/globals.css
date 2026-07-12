@@ -3540,3 +3540,29 @@ body.ready {
 /* ═══════════════════════════════════════════
    END CONTACT HERO
    ═══════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────
+   GSAP MORPH EXPLORE CARD
+   ───────────────────────────────────────── */
+#real-info-card {
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+#real-info-card.morph-explore {
+  width: 420px !important;
+  height: 110px !important;
+  border-radius: 24px !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+
+#real-info-card.morph-explore:hover {
+  transform: scale(1.02) translateY(-2px) !important;
+}
+
+@media (max-width: 768px) {
+  #real-info-card.morph-explore {
+    width: 280px !important;
+    height: 64px !important;
+    border-radius: 32px !important;
+  }
+}

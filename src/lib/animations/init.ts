@@ -556,29 +556,45 @@ export function initFeaturedProductsScroll(scope: Document | Element = document)
           scrollTriggerInstance.kill();
         }
 
-        const containerHeight = pinContainer.offsetHeight;
-        const pinHeight = productPin.offsetHeight;
-        // In the original, it was yPercent calculated this way:
-        const yPercentValue = ((containerHeight - pinHeight) / pinHeight) * 100;
+        const splitSection = document.getElementById("split-section");
+        const realInfoCard = document.getElementById("real-info-card");
 
-        const animation = gsap.fromTo(
-          productPin,
-          { yPercent: 0 },
-          {
-            yPercent: yPercentValue,
-            ease: "linear",
-            scrollTrigger: {
-              trigger: productPin,
-              start: "bottom+=10% bottom",
-              endTrigger: pinContainer,
-              end: "bottom bottom-=10%",
-              pinSpacing: false,
-              scrub: 0.5,
-            },
-          }
-        );
+        // Calculate total travel distance to fake a pin.
+        // It needs to travel down the height of the pinContainer PLUS the distance into SplitSection.
+        // We want it to stay pinned until the bottom of SplitSection.
+        const containerHeight = pinContainer.offsetHeight;
+        const splitHeight = splitSection ? splitSection.offsetHeight : 0;
+        
+        // The total scrollable distance is the height of the projects container + split section
+        // We subtract pinHeight so it stops exactly at the bottom of the track.
+        const pinHeight = productPin.offsetHeight;
+        
+        // Instead of calculating a static yPercent which is error prone across sections,
+        // we can just use `y` with a function that calculates the distance.
+        const animation = gsap.to(productPin, {
+          y: () => (pinContainer.offsetHeight + (splitSection ? splitSection.offsetHeight : 0)) - productPin.offsetHeight,
+          ease: "none",
+          scrollTrigger: {
+            trigger: productPin,
+            start: "bottom+=10% bottom",
+            endTrigger: splitSection || pinContainer,
+            end: "bottom bottom-=10%",
+            scrub: true, // perfect 1:1 scrubbing to mimic a pin
+            invalidateOnRefresh: true, // recalculate on resize
+          },
+        });
 
         scrollTriggerInstance = animation.scrollTrigger;
+
+        // Add a secondary ScrollTrigger to toggle the morphing class when the card enters SplitSection
+        if (splitSection && realInfoCard) {
+          ScrollTrigger.create({
+            trigger: splitSection,
+            start: "top center", // when SplitSection reaches center of screen
+            end: "bottom top", 
+            toggleClass: { targets: realInfoCard, className: "morph-explore" }
+          });
+        }
       }
 
       setupPinAnimation();

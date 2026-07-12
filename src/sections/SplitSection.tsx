@@ -1,99 +1,116 @@
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-const SPLIT_VIDEO_SRC = "/images/my_showcase.mp4";
+import { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform, useSpring, useVelocity, useAnimationFrame, useMotionValue } from "framer-motion";
+
+// Helper function to wrap values
+const wrap = (min: number, max: number, v: number) => {
+  const rangeSize = max - min;
+  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
+};
+
+// Sub-component for the velocity marquee
+interface VelocityTextProps {
+  children: React.ReactNode;
+  baseVelocity: number;
+}
+
+function VelocityText({ children, baseVelocity = 2 }: VelocityTextProps) {
+  const baseX = useMotionValue(0);
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(scrollVelocity, { damping: 50, stiffness: 400 });
+  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 5], { clamp: false });
+
+  // Wrap from 0% to -25% (because we render 4 identical children, -25% shifts exactly one child over)
+  const x = useTransform(baseX, (v) => `${wrap(0, -25, v)}%`);
+
+  const directionFactor = useRef<number>(1);
+  useAnimationFrame((t, delta) => {
+    let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
+    
+    // Change direction based on scroll direction if velocity is high enough
+    if (velocityFactor.get() < 0) {
+      directionFactor.current = -1;
+    } else if (velocityFactor.get() > 0) {
+      directionFactor.current = 1;
+    }
+
+    moveBy += directionFactor.current * Math.abs(moveBy) * Math.abs(velocityFactor.get());
+    baseX.set(baseX.get() + moveBy);
+  });
+
+  return (
+    <div className="overflow-hidden whitespace-nowrap flex flex-nowrap m-0">
+      <motion.div className="flex whitespace-nowrap flex-nowrap" style={{ x }}>
+        <h2 className="display text-[14vw] md:text-[9vw] leading-none px-4 text-[#f4f4f5]/10 uppercase tracking-tighter">
+          {children}
+        </h2>
+        <h2 className="display text-[14vw] md:text-[9vw] leading-none px-4 text-[#f4f4f5]/10 uppercase tracking-tighter">
+          {children}
+        </h2>
+        <h2 className="display text-[14vw] md:text-[9vw] leading-none px-4 text-[#f4f4f5]/10 uppercase tracking-tighter">
+          {children}
+        </h2>
+        <h2 className="display text-[14vw] md:text-[9vw] leading-none px-4 text-[#f4f4f5]/10 uppercase tracking-tighter">
+          {children}
+        </h2>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function SplitSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 25,
+    restDelta: 0.001
+  });
+
+  // Section Background: Transitions from light (Projects theme) to dark (Archive/About theme)
+  const backgroundColor = useTransform(smoothProgress, [0, 0.4], ["#f2f2f2", "#0a0a0a"]);
+  
+  // Fade in the marquees smoothly as you enter the section
+  const marqueeOpacity = useTransform(smoothProgress, [0, 0.3], [0, 1]);
+
   return (
     <section
-      className="relative overflow-hidden container custom-grid min-h-[80dvh] md:min-h-screen pb-20 pt-0 -mt-[5dvh] md:-mt-[10dvh]"
+      id="split-section"
+      ref={containerRef}
+      className="relative w-full h-[120vh]"
       data-header-theme="dark"
     >
-      {/* Left: text */}
-      <div className="col-span-4 md:col-span-5 relative z-10 order-2 md:order-1">
-        <div
-          className="w-full h-full flex flex-col justify-center"
-          data-scroll
-          data-scroll-speed="-0.15"
+      {/* Sticky Container */}
+      <motion.div 
+        style={{ backgroundColor }}
+        className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden"
+      >
+        
+        {/* Massive Background Marquees */}
+        <motion.div 
+          style={{ opacity: marqueeOpacity }}
+          className="absolute inset-0 flex flex-col justify-center gap-2 pointer-events-none whitespace-nowrap z-0"
         >
-          {/* Display heading */}
-          <div className="mb-8 md:mb-16">
-            <h2
-              className="display relative text-black mb-2"
-              data-split="heading"
-              data-split-reveal="chars"
-            >
-              More
-            </h2>
-            <h3
-              className="display-cursive relative ml-8 md:ml-20 -mt-6 md:-mt-12 whitespace-nowrap text-black"
-              data-split="heading"
-              data-split-reveal="chars"
-            >
-              Projects
-            </h3>
-          </div>
+          <VelocityText baseVelocity={-2}>
+            HYPE & VICE — UNIVERSAL DATA HUB — AMRUT — EGPG — AWWWARDS REBUILD — 
+          </VelocityText>
+          
+          <VelocityText baseVelocity={1.5}>
+            AMRUT — EGPG — AWWWARDS REBUILD — HYPE & VICE — UNIVERSAL DATA HUB — 
+          </VelocityText>
 
-          {/* Body copy */}
-          <p
-            className="regular text-black max-w-md md:ml-20 mb-8"
-            data-split="heading"
-            data-split-reveal="lines"
-          >
-            There's more where that came from. Browse all my work — mobile apps, web platforms, fullstack tools, and everything in between.
-          </p>
-
-          {/* CTA */}
-          <span className="md:ml-20" data-reveal-group="scroll" data-delay="0">
-            <Link
-              href="/projects"
-              data-underline-link="alt"
-              className="button-hover group relative inline-flex items-center label text-inherit mb-2 cursor-pointer"
-            >
-              <div className="relative overflow-hidden inline-flex items-center">
-                <span aria-hidden="true" className="button-icon-sweep">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 8">
-                    <g stroke="currentColor" strokeWidth=".75">
-                      <path d="m14.931 7.652 3.733-3.733L14.931.187M18.664 3.92H0" />
-                    </g>
-                  </svg>
-                </span>
-                <span className="button-text">View All Projects</span>
-                <span aria-hidden="true" className="button-icon-default">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 8">
-                    <g stroke="currentColor" strokeWidth=".75">
-                      <path d="m14.931 7.652 3.733-3.733L14.931.187M18.664 3.92H0" />
-                    </g>
-                  </svg>
-                </span>
-              </div>
-            </Link>
-          </span>
-        </div>
-      </div>
-
-      {/* Right: video */}
-      <div className="col-span-4 md:col-start-7 md:col-span-6 lg:col-span-7 relative z-0 overflow-hidden order-1 md:order-2 min-h-80 md:min-h-[120dvh]">
-        <div
-          className="media-wrapper w-full h-full relative overflow-hidden parallax-height"
-          data-scroll
-          data-scroll-speed="-0.5"
-          style={{ willChange: "transform" }}
-        >
-          <video
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full object-cover"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-          >
-            <source src={SPLIT_VIDEO_SRC} type="video/mp4" />
-          </video>
-        </div>
-      </div>
-
-
+          <VelocityText baseVelocity={-2.5}>
+            UNIVERSAL DATA HUB — AWWWARDS REBUILD — EGPG — AMRUT — HYPE & VICE — 
+          </VelocityText>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

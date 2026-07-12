@@ -10,7 +10,7 @@ export default function Projects() {
   return (
     <section
       id={`featured-products-${SECTION_ID}`}
-      className="pt-20 pb-0 container"
+      className="pt-20 pb-0 container relative z-50"
       data-section-id={SECTION_ID}
       data-header-theme="dark"
     >
@@ -71,78 +71,95 @@ export default function Projects() {
               data-featured-product-pin
             >
               <div className="custom-grid h-full">
-                <div className="col-start-5 col-span-4 pointer-events-auto h-full relative z-40">
+                <div className="col-start-5 col-span-4 flex items-center justify-center pointer-events-auto h-full relative z-40">
                   <div
-                    className="group flex flex-col justify-between items-center text-center custom-border border-2 bg-off-white hover:bg-black transition-colors duration-300 relative py-8 px-4 h-full rounded-none overflow-hidden"
+                    id="real-info-card"
+                    className="group bg-[#f2f2f2] custom-border border-2 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] relative w-full h-full rounded-none overflow-hidden cursor-pointer"
                   >
+                    {/* Hover Reveal Background (Visible normally, stays in morph) */}
+                    <div className="absolute inset-0 bg-[#1c1c1c] scale-y-0 group-hover:scale-y-100 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-0" />
+
                     {/* Invisible link covering the entire card */}
                     <a
                       id={`fixed-product-info-${SECTION_ID}`}
                       href={FEATURED_PROJECTS[0].url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="absolute inset-0 z-10"
+                      className="absolute inset-0 z-40"
                       aria-label="Visit project site"
                     ></a>
 
-                    {/* Status tag & App Link */}
-                    <div className="relative flex items-center justify-center gap-2 z-20">
-                      <div className="relative flex items-center justify-center px-4 py-1.5 border border-gray/20 group-hover:border-white/20 rounded-lg transition-colors duration-300">
-                        <span className="text-gray label whitespace-nowrap z-10 transition-colors duration-300 group-hover:text-white">
-                          <span id={`sourcing-tag-${SECTION_ID}`}>
-                            {FEATURED_PROJECTS[0].status}
-                          </span>
+                    {/* --- THE EXPLORE BUTTON (Fades in during SplitSection morph) --- */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 scale-90 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] z-50 pointer-events-none group-[.morph-explore]:opacity-100 group-[.morph-explore]:scale-100 text-[#f4f4f5] mix-blend-difference">
+                      <div className="flex flex-col items-center justify-center leading-[0.9] text-center">
+                        <span className="font-title text-[28px] md:text-[34px] tracking-tight uppercase transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:tracking-[0.1em]">
+                          View All
+                        </span>
+                        <span className="font-title text-[28px] md:text-[34px] tracking-tight uppercase transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:tracking-[0.1em]">
+                          Projects
                         </span>
                       </div>
-
-                      {/* App Link Button (Hidden if no appUrl) */}
-                      <a
-                        id={`fixed-product-app-link-${SECTION_ID}`}
-                        href={FEATURED_PROJECTS[0].appUrl || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`flex items-center justify-center w-10 h-10 rounded-full bg-gray/10 hover:bg-white hover:text-black transition-colors duration-300 text-gray ${!FEATURED_PROJECTS[0].appUrl ? 'hidden' : ''}`}
-                        title="Download App"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="7 10 12 15 17 10"></polyline>
-                          <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                      </a>
                     </div>
 
-                    {/* Title + Role */}
-                    <div className="flex flex-col gap-2 relative z-20 pointer-events-none">
-                      <h3
-                        id={`product-title-${SECTION_ID}`}
-                        className="medium text-black transition-colors duration-300 group-hover:text-white text-3xl"
-                      >
-                        {FEATURED_PROJECTS[0].title}
-                      </h3>
-                      <p
-                        id={`product-price-${SECTION_ID}`}
-                        className="label text-gray transition-colors duration-300 group-hover:text-white/80 uppercase tracking-widest"
-                      >
-                        {FEATURED_PROJECTS[0].role}
-                      </p>
-                    </div>
+                    {/* --- THE ORIGINAL CONTENT (Fades out during SplitSection morph) --- */}
+                    <div className="absolute inset-0 flex flex-col justify-between items-center text-center py-8 px-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-[.morph-explore]:opacity-0 group-[.morph-explore]:scale-95 z-20 pointer-events-none">
+                      {/* Status tag & App Link */}
+                      <div className="relative flex items-center justify-center gap-2">
+                        <div className="relative flex items-center justify-center px-4 py-1.5 border border-black/20 group-hover:border-white/20 rounded-lg transition-colors duration-300">
+                          <span className="text-black label whitespace-nowrap z-10 transition-colors duration-300 group-hover:text-white">
+                            <span id={`sourcing-tag-${SECTION_ID}`}>
+                              {FEATURED_PROJECTS[0].status}
+                            </span>
+                          </span>
+                        </div>
 
-                    {/* Subtitle / CTA */}
-                    <div className="relative w-full z-20 pointer-events-none">
-                      <p
-                        id={`product-subtitle-${SECTION_ID}`}
-                        className="regular text-gray transition-opacity duration-300 group-hover:opacity-0 max-w-[80%] mx-auto"
-                      >
-                        {FEATURED_PROJECTS[0].subtitle}
-                      </p>
-                      
-                      {/* Fake CTA that just shows on hover, but the whole card is the real link */}
-                      <span
-                        className="regular absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center text-gray opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white"
-                      >
-                        Visit Live Site ↗
-                      </span>
+                        <a
+                          id={`fixed-product-app-link-${SECTION_ID}`}
+                          href={FEATURED_PROJECTS[0].appUrl || "#"}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-black/5 hover:bg-white hover:text-black transition-colors duration-300 text-black group-hover:text-white ${!FEATURED_PROJECTS[0].appUrl ? 'hidden' : ''}`}
+                          title="Download App"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                          </svg>
+                        </a>
+                      </div>
+
+                      {/* Title + Role */}
+                      <div className="flex flex-col gap-2 relative">
+                        <h3
+                          id={`product-title-${SECTION_ID}`}
+                          className="medium text-black transition-colors duration-300 group-hover:text-white text-3xl"
+                        >
+                          {FEATURED_PROJECTS[0].title}
+                        </h3>
+                        <p
+                          id={`product-price-${SECTION_ID}`}
+                          className="label text-black transition-colors duration-300 group-hover:text-white/80 uppercase tracking-widest"
+                        >
+                          {FEATURED_PROJECTS[0].role}
+                        </p>
+                      </div>
+
+                      {/* Subtitle / CTA */}
+                      <div className="relative w-full">
+                        <p
+                          id={`product-subtitle-${SECTION_ID}`}
+                          className="regular text-black transition-opacity duration-300 group-hover:opacity-0 max-w-[80%] mx-auto"
+                        >
+                          {FEATURED_PROJECTS[0].subtitle}
+                        </p>
+                        
+                        <span
+                          className="regular absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center text-black opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-hover:text-white"
+                        >
+                          Visit Live Site ↗
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
