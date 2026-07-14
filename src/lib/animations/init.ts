@@ -42,10 +42,9 @@ export function initAllAnimations() {
 
   // Initialize Lenis for smooth scrolling
   const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom premium easing curve
+    lerp: 0.1, // Snappy linear interpolation instead of fixed duration
     smoothWheel: true,
-    wheelMultiplier: 1, // Normalized wheel scrolling
+    wheelMultiplier: 1.2, // Slightly faster wheel scroll
     touchMultiplier: 2, // Natural touch drag
   });
   globalLenis = lenis;

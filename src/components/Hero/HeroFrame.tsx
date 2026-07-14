@@ -166,6 +166,13 @@ export function HeroFrame({ activeDirection, hasSeenIntro = false }: HeroFramePr
       {/* ── 0. Intro video ─────────────────────────────────────────────────── */}
       {isVideoVisible && (
         <video
+          ref={(el) => {
+            if (el) {
+              el.defaultMuted = true;
+              el.muted = true;
+              el.play().catch(() => {});
+            }
+          }}
           src="/images/hero/frame1.mp4"
           autoPlay
           muted
