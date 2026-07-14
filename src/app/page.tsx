@@ -6,7 +6,7 @@ import SplitSection from "@/sections/SplitSection";
 import AboutTimeline from "@/sections/AboutTimeline";
 
 export const metadata: Metadata = {
-  title: "Sumanth Bhat – Senior Fullstack & Mobile Developer",
+  title: "Sumanth Bhat – Fullstack & Mobile Developer",
   description:
     "Selected works and portfolio of Sumanth Bhat. Expert in React, Next.js, and Flutter.",
 };
@@ -17,7 +17,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <h1 className="sr-only">Sumanth Bhat - Senior Fullstack & Mobile Developer</h1>
+      <h1 className="sr-only">Sumanth Bhat - Fullstack & Mobile Developer</h1>
       <HeroSection hasSeenIntro={hasSeenIntro} />
       <Projects />
       <SplitSection />

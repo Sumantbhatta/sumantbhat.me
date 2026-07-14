@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Lexend_Giga } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 const lexendGiga = Lexend_Giga({ 
   subsets: ["latin"],
@@ -107,6 +108,7 @@ export default function RootLayout({
 
         {/* Bootstrap all GSAP animations after page load */}
         <AnimationBootstrap />
+        <Analytics />
       </body>
     </html>
   );
