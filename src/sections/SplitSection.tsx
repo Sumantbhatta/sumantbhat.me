@@ -85,7 +85,7 @@ export default function SplitSection() {
       id="split-section"
       ref={containerRef}
       className="relative w-full h-[120vh]"
-      data-header-theme="dark"
+      data-header-theme="light"
     >
       {/* Sticky Container */}
       <motion.div 
@@ -99,15 +99,15 @@ export default function SplitSection() {
           className="absolute inset-0 flex flex-col justify-center gap-2 pointer-events-none whitespace-nowrap z-0"
         >
           <VelocityText baseVelocity={-2}>
-            HYPE & VICE — UNIVERSAL DATA HUB — AMRUT — EGPG — AWWWARDS REBUILD — 
+            AMRUT — EGPG — ENTRY360 — HANDYMAN Q8 — IFP HOMEWORK AI — KSVP PARENT APP — LEZZGOO — 
           </VelocityText>
           
           <VelocityText baseVelocity={1.5}>
-            AMRUT — EGPG — AWWWARDS REBUILD — HYPE & VICE — UNIVERSAL DATA HUB — 
+            NEXSTI ERP — SANSKARADHAMA — SCANAI — SRINIVAS UNIVERSITY APP — TELESEEN — YIACO MEDSHOP — 
           </VelocityText>
 
           <VelocityText baseVelocity={-2.5}>
-            UNIVERSAL DATA HUB — AWWWARDS REBUILD — EGPG — AMRUT — HYPE & VICE — 
+            LEZZGOO — KSVP PARENT APP — TELESEEN — EGPG — AMRUT — SCANAI — NEXSTI ERP — 
           </VelocityText>
         </motion.div>
       </motion.div>

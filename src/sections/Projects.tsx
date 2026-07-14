@@ -102,7 +102,7 @@ export default function Projects() {
                     </div>
 
                     {/* --- THE ORIGINAL CONTENT (Fades out during SplitSection morph) --- */}
-                    <div className="absolute inset-0 flex flex-col justify-between items-center text-center py-8 px-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-[.morph-explore]:opacity-0 group-[.morph-explore]:scale-95 z-20 pointer-events-none">
+                    <div className="absolute inset-0 flex flex-col justify-between items-center text-center pt-8 pb-16 px-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-[.morph-explore]:opacity-0 group-[.morph-explore]:scale-95 z-20 pointer-events-none">
                       {/* Status tag & App Link */}
                       <div className="relative flex items-center justify-center gap-2">
                         <div className="relative flex items-center justify-center px-4 py-1.5 border border-black/20 group-hover:border-white/20 rounded-lg transition-colors duration-300">
@@ -160,6 +160,35 @@ export default function Projects() {
                           Visit Live Site ↗
                         </span>
                       </div>
+                    </div>
+
+                    {/* ── Nav Buttons ── */}
+                    <div className="absolute bottom-6 left-0 right-0 px-6 flex items-center justify-between z-50 group-[.morph-explore]:opacity-0 transition-opacity duration-500">
+                      <button
+                        id={`project-nav-prev-${SECTION_ID}`}
+                        aria-label="Previous project"
+                        data-project-nav="prev"
+                        data-section-id={SECTION_ID}
+                        className="flex items-center gap-1.5 regular text-black/40 hover:text-black group-hover:text-white/70 transition-colors duration-300 cursor-pointer select-none disabled:opacity-20"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                        Prev
+                      </button>
+
+                      <button
+                        id={`project-nav-next-${SECTION_ID}`}
+                        aria-label="Next project"
+                        data-project-nav="next"
+                        data-section-id={SECTION_ID}
+                        className="flex items-center gap-1.5 regular text-black/40 hover:text-black group-hover:text-white/70 transition-colors duration-300 cursor-pointer select-none disabled:opacity-20"
+                      >
+                        Next
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 </div>

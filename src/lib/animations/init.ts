@@ -489,19 +489,65 @@ export function initFeaturedProductsScroll(scope: Document | Element = document)
     isInitialized = true;
   };
 
+  // ── Nav Buttons (Prev / Next) ────────────────────────────────────────────
+  const prevBtn = scope.querySelector<HTMLButtonElement>(`#project-nav-prev-${sectionId}`);
+  const nextBtn = scope.querySelector<HTMLButtonElement>(`#project-nav-next-${sectionId}`);
+  let navCurrentIndex = 0;
+
+  const updateNavState = (index: number) => {
+    navCurrentIndex = index;
+    if (prevBtn) (prevBtn as HTMLButtonElement).disabled = index === 0;
+    if (nextBtn) (nextBtn as HTMLButtonElement).disabled = index === sections.length - 1;
+  };
+
+  const navTo = (index: number) => {
+    const target = sections[index];
+    if (!target) return;
+    // Use Lenis scrollTo so smooth scroll works correctly
+    if (globalLenis) {
+      globalLenis.scrollTo(target, { offset: -(window.innerHeight / 2 - target.offsetHeight / 2), duration: 1 });
+    } else {
+      const rect = target.getBoundingClientRect();
+      const scrollTarget = window.scrollY + rect.top - window.innerHeight / 2 + target.offsetHeight / 2;
+      window.scrollTo({ top: scrollTarget, behavior: "smooth" });
+    }
+    updateNavState(index);
+  };
+
+  // Single loop: register scroll triggers for both content + nav state updates
   sections.forEach((section, index) => {
     ScrollTrigger.create({
       trigger: section,
       start: "top center",
       end: "bottom center",
-      onEnter: () => updateContent(index),
-      onEnterBack: () => updateContent(index),
+      onEnter: () => { updateContent(index); updateNavState(index); },
+      onEnterBack: () => { updateContent(index); updateNavState(index); },
     });
   });
 
   updateContent(0, false);
 
-  // Mobile Project Reveal
+  if (prevBtn) {
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const target = Math.max(0, navCurrentIndex - 1);
+      navTo(target);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const target = Math.min(sections.length - 1, navCurrentIndex + 1);
+      navTo(target);
+    });
+  }
+
+  updateNavState(0);
+
+
   const mobileProjects = scope.querySelectorAll<HTMLElement>(".mobile-project-reveal");
   mobileProjects.forEach((proj) => {
     gsap.fromTo(
