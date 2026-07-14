@@ -170,7 +170,14 @@ export function HeroFrame({ activeDirection, hasSeenIntro = false }: HeroFramePr
             if (el) {
               el.defaultMuted = true;
               el.muted = true;
-              el.play().catch(() => {});
+              el.play().catch(() => {
+                // If Safari/iOS strictly blocks autoplay even with muted/playsInline,
+                // immediately fall back to the GIF so the user isn't stuck on a blank screen.
+                sessionStorage.setItem("hero_intro_seen", "1");
+                document.cookie = "hero_intro_seen=1; path=/";
+                setIsVideoVisible(false);
+                setIsFaceVisible(true);
+              });
             }
           }}
           src="/images/hero/frame1.mp4"
@@ -199,7 +206,7 @@ export function HeroFrame({ activeDirection, hasSeenIntro = false }: HeroFramePr
         fill
         priority
         unoptimized
-        className="object-cover relative z-10"
+        className={`object-cover relative z-10 ${isVideoVisible ? 'hidden' : 'block'}`}
       />
 
       {/* ── 1b. Notebook intro text ─────────────────────────────────────────── */}
