@@ -23,7 +23,7 @@ export default function Projects() {
       </h2>
 
       {/* ── MOBILE: simple grid ─────────────────────────── */}
-      <div className="block md:hidden">
+      <div className="block md:hidden px-4">
         <div className="custom-grid gap-y-12">
           {FEATURED_PROJECTS.map((project, index) => (
             <div className="col-span-4 flex flex-col gap-4 mobile-project-reveal opacity-0" key={project.handle}>

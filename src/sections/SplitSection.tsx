@@ -3,6 +3,8 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, useVelocity, useAnimationFrame, useMotionValue } from "framer-motion";
 
+import Link from "next/link";
+
 // Helper function to wrap values
 const wrap = (min: number, max: number, v: number) => {
   const rangeSize = max - min;
@@ -109,6 +111,26 @@ export default function SplitSection() {
           <VelocityText baseVelocity={-2.5}>
             LEZZGOO — KSVP PARENT APP — TELESEEN — EGPG — AMRUT — SCANAI — NEXSTI ERP — 
           </VelocityText>
+        </motion.div>
+
+        {/* View All Projects Button Overlay (Mobile Only) */}
+        <motion.div
+          style={{ opacity: marqueeOpacity }}
+          className="absolute inset-0 flex md:hidden items-center justify-center z-10 pointer-events-none"
+        >
+          <Link 
+            href="/projects" 
+            className="group relative inline-flex items-center justify-center px-8 py-4 overflow-hidden rounded-full border border-white/20 hover:border-white transition-colors duration-500 bg-black/50 backdrop-blur-md pointer-events-auto"
+          >
+            <div className="absolute inset-0 bg-white scale-y-0 group-hover:scale-y-100 origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-0" />
+            <span className="relative z-10 font-title text-[18px] uppercase tracking-widest text-white group-hover:text-black transition-colors duration-500 flex items-center gap-2">
+              View All Projects
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:translate-x-2 transition-transform duration-500">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+            </span>
+          </Link>
         </motion.div>
       </motion.div>
     </section>

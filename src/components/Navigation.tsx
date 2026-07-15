@@ -110,7 +110,13 @@ export default function Navigation() {
         {/* Centre logo */}
         <Link
           href="/"
-          onClick={closeMenu}
+          onClick={(e) => {
+            closeMenu();
+            if (pathname === "/") {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }}
           data-flip-element="wrapper-nav"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 md:w-56 aspect-video flex items-center justify-center z-20"
         >

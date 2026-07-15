@@ -289,6 +289,13 @@ function TimelineOutro() {
           </h2>
           
         </div>
+
+        {/* Fake Button for visual affordance */}
+        <div className="mt-8 md:mt-12 group-hover:scale-105 transition-transform duration-[0.85s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]">
+           <span className="inline-flex items-center justify-center px-8 py-3 md:py-4 border border-current rounded-full uppercase tracking-widest text-xs md:text-sm font-medium group-hover:bg-[#f4f4f5] group-hover:text-[#0a0a0a] transition-colors duration-300">
+             About Me
+           </span>
+        </div>
       </div>
       
       {/* Floating Arrow */}
